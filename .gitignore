@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+bayesnet_py310/
+env/
+venv/
+
+# VSCode and JetBrains IDEs (like PyCharm)
+.vscode/
+.idea/
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+*.bak
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Results and artifacts (optional — remove if you want them in Git)
+results/
+*.csv
+*.png
+
+# Project tree output
+project_tree.txt
