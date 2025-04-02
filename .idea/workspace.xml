@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="04170353-6dd5-4aee-806a-c4295c4bd632" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/generate_tree.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Ensemble_SandBox.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Ensemble_SandBox.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Bayesian_ensemble.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fulltraining/Models.py" beforeDir="false" afterPath="$PROJECT_DIR$/fulltraining/Models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fulltraining/helper_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/fulltraining/helper_functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fulltraining/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/fulltraining/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_tree.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,13 +38,16 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Python tests.Python tests for test_calibration.TestCalibrationCurve.test_all_wrong_predictions.executor": "Run",
+    "Python tests.Python tests in test_calibration.py.executor": "Run",
     "Python.Bayesian_ensemble.executor": "Debug",
     "Python.HelperFunctions.executor": "Run",
     "Python.credit_score_testing.executor": "Debug",
-    "Python.generate_tree.executor": "Run",
+    "Python.generate_tree.executor": "Debug",
     "Python.helper_functions.executor": "Run",
     "Python.main (1).executor": "Run",
-    "Python.main.executor": "Run",
+    "Python.main.executor": "Debug",
+    "Python.scratc h.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "last_opened_file_path": "C:/Users/roeym/Desktop/projects/Ensemble_SandBox/fulltraining/main.py",
@@ -67,7 +68,30 @@
       <recent name="C:\Users\roeym\Desktop\projects\Ensemble_SandBox" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.generate_tree">
+  <component name="RunManager" selected="Python tests.Python tests in test_calibration.py">
+    <configuration name="calibration" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Ensemble_SandBox" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\roeym\Desktop\projects\Ensemble_SandBox\calibration.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="generate_tree" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Ensemble_SandBox" />
       <option name="ENV_FILES" value="" />
@@ -114,8 +138,43 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_calibration.TestCalibrationCurve.test_all_wrong_predictions" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="Ensemble_SandBox" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_calibration.TestCalibrationCurve.test_all_wrong_predictions&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests in test_calibration.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="Ensemble_SandBox" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/test_calibration.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests in test_calibration.py" />
+        <item itemvalue="Python tests.Python tests for test_calibration.TestCalibrationCurve.test_all_wrong_predictions" />
+        <item itemvalue="Python.calibration" />
         <item itemvalue="Python.generate_tree" />
       </list>
     </recent_temporary>
@@ -156,7 +215,7 @@
       <workItem from="1741882166242" duration="2116000" />
       <workItem from="1741886218134" duration="5312000" />
       <workItem from="1742754070993" duration="4716000" />
-      <workItem from="1742837394228" duration="2877000" />
+      <workItem from="1742837394228" duration="13487000" />
     </task>
     <servers />
   </component>
@@ -174,12 +233,25 @@
       </map>
     </option>
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/fulltraining/helper_functions.py</url>
+          <line>53</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Ensemble_SandBox$.coverage" NAME=" Coverage Results" MODIFIED="1743271132861" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Ensemble_SandBox$credit_score_testing.coverage" NAME="credit_score_testing Coverage Results" MODIFIED="1741335371358" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Ensemble_SandBox$helper_functions.coverage" NAME="helper_functions Coverage Results" MODIFIED="1742046385224" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/fulltraining" />
+    <SUITE FILE_PATH="coverage/Ensemble_SandBox$scratc_h.coverage" NAME="scratc h Coverage Results" MODIFIED="1743270162404" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Ensemble_SandBox$Bayesian_ensemble.coverage" NAME="Bayesian_ensemble Coverage Results" MODIFIED="1741882990203" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Ensemble_SandBox$generate_tree.coverage" NAME="generate_tree Coverage Results" MODIFIED="1742921833079" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Ensemble_SandBox$main.coverage" NAME="main Coverage Results" MODIFIED="1742838659901" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Ensemble_SandBox$generate_tree.coverage" NAME="generate_tree Coverage Results" MODIFIED="1743008851584" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Ensemble_SandBox$main.coverage" NAME="main Coverage Results" MODIFIED="1743269425761" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Ensemble_SandBox$HelperFunctions.coverage" NAME="HelperFunctions Coverage Results" MODIFIED="1741206325534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Ensemble_SandBox$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1742759098780" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/fulltraining" />
   </component>

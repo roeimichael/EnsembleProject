@@ -1,124 +1,213 @@
 import torch
-from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
-from torch.utils.data import DataLoader, TensorDataset
-from Models import SimpleNN, BayesianNN
-from helper_functions import train_simplenn, sgld_training, evaluate_model, save_results, compute_ece,plot_calibration_curve
-import matplotlib
-matplotlib.use("TkAgg")
-import matplotlib.pyplot as plt
+import torch.nn as nn
+import torch.optim as optim
+import torchvision
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
 import numpy as np
-from sklearn.metrics import accuracy_score, precision_score, f1_score
+import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+import seaborn as sns
+from Models import SimpleNN, BayesianNN
+from helper_functions import train_simplenn, sgld_training, evaluate_model, evaluate_ensemble, plot_model_analysis
+from model_manager import save_model, load_model, save_sgld_samples, load_sgld_samples
+from config_manager import ConfigManager
 
-# -------------------------
-# Set configuration
-lr = 0.001
-noise_std = 0.001
-epochs = 300
-burnin_ratio = 0.5
-# -------------------------
+def load_and_prepare_data(config: ConfigManager):
+    """Load and prepare the Fashion-MNIST dataset."""
+    data_config = config.get_data_config()
+    transform_config = data_config['transform']
+    
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((transform_config['normalize_mean'],), 
+                           (transform_config['normalize_std'],))
+    ])
+    
+    # Load full dataset
+    trainset = torchvision.datasets.FashionMNIST(
+        root='./data', 
+        train=True, 
+        download=True, 
+        transform=transform
+    )
+    
+    testset = torchvision.datasets.FashionMNIST(
+        root='./data', 
+        train=False, 
+        download=True, 
+        transform=transform
+    )
+    
+    # Take a smaller subset of the data
+    train_size = int(data_config['train_size'] * len(trainset))
+    test_size = int(data_config['train_size'] * len(testset))
+    
+    trainset, _ = torch.utils.data.random_split(trainset, [train_size, len(trainset) - train_size])
+    testset, _ = torch.utils.data.random_split(testset, [test_size, len(testset) - test_size])
+    
+    train_loader = DataLoader(
+        trainset, 
+        batch_size=data_config['batch_size'], 
+        shuffle=True, 
+        num_workers=data_config['num_workers']
+    )
+    
+    # Prepare test data and flatten images
+    X_test = torch.stack([x for x, _ in testset])
+    X_test = X_test.view(X_test.size(0), -1)  # Flatten images to (n_samples, 784)
+    y_test = torch.tensor([y for _, y in testset])
+    
+    print(f"Using {train_size} training samples and {test_size} test samples")
+    return train_loader, X_test, y_test
 
-# Load dataset
-data = load_breast_cancer()
-X, y = data.data, data.target
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+def main():
+    # Load configuration
+    config = ConfigManager()
+    
+    # Set random seed for reproducibility
+    torch.manual_seed(config.get_random_seed())
+    np.random.seed(config.get_random_seed())
+    
+    # Set device
+    device = torch.device(config.get_device() if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
+    
+    # Load and prepare data
+    train_loader, X_test, y_test = load_and_prepare_data(config)
+    
+    # Get model configuration
+    model_config = config.get_model_config()
+    input_size = model_config['input_size']
+    hidden_dims = tuple(model_config['hidden_dims'])
+    
+    # Try to load existing models, or train new ones
+    try:
+        print("\nAttempting to load existing models...")
+        simplenn_model = SimpleNN(
+            input_size, 
+            hidden_dims,
+            dropout_rate=model_config['dropout_rate'],
+            use_batch_norm=model_config['use_batch_norm']
+        ).to(device)
+        simplenn_model = load_model(simplenn_model, "simplenn", device)
+        print("Loaded existing SimpleNN model")
+        
+        # Load SGLD samples
+        sgld_samples = load_sgld_samples("sgld")
+        print(f"Loaded {len(sgld_samples)} SGLD samples")
+        
+        # Create models from samples
+        sgld_models = []
+        for i, sample in enumerate(sgld_samples):
+            model = BayesianNN(
+                input_size, 
+                hidden_dims,
+                dropout_rate=model_config['dropout_rate'],
+                use_batch_norm=model_config['use_batch_norm'],
+                prior_std=model_config['prior_std']
+            ).to(device)
+            for name, param in model.named_parameters():
+                if name in sample:
+                    param.data.copy_(sample[name].to(device))
+            sgld_models.append(model)
+        print("Created models from SGLD samples")
+        
+    except FileNotFoundError:
+        print("\nNo existing models found. Training new models...")
+        # Create and train a single SimpleNN model
+        print("\nTraining SimpleNN model...")
+        simplenn_model = SimpleNN(
+            input_size, 
+            hidden_dims,
+            dropout_rate=model_config['dropout_rate'],
+            use_batch_norm=model_config['use_batch_norm']
+        ).to(device)
+        
+        simplenn_config = config.get_simplenn_config()
+        train_simplenn(
+            simplenn_model, 
+            train_loader, 
+            epochs=simplenn_config['epochs'],
+            lr=simplenn_config['learning_rate'],
+            device=device
+        )
+        save_model(simplenn_model, "simplenn")
+        
+        # Train SGLD models (sample from posterior)
+        print("\nSampling from posterior using SGLD...")
+        model = BayesianNN(
+            input_size, 
+            hidden_dims,
+            dropout_rate=model_config['dropout_rate'],
+            use_batch_norm=model_config['use_batch_norm'],
+            prior_std=model_config['prior_std']
+        ).to(device)
+        
+        sgld_config = config.get_sgld_config()
+        sgld_samples = sgld_training(
+            model=model,
+            train_loader=train_loader,
+            epochs=sgld_config['epochs'],
+            lr=sgld_config['learning_rate'],
+            noise_std=sgld_config['noise_std'],
+            device=device,
+            temperature=sgld_config['temperature']
+        )
+        save_sgld_samples(sgld_samples, "sgld")
+        
+        # Create models from samples
+        sgld_models = []
+        for i, sample in enumerate(sgld_samples):
+            model = BayesianNN(
+                input_size, 
+                hidden_dims,
+                dropout_rate=model_config['dropout_rate'],
+                use_batch_norm=model_config['use_batch_norm'],
+                prior_std=model_config['prior_std']
+            ).to(device)
+            for name, param in model.named_parameters():
+                if name in sample:
+                    param.data.copy_(sample[name].to(device))
+            sgld_models.append(model)
+    
+    # Evaluate SimpleNN model
+    print("\nEvaluating SimpleNN model...")
+    metrics = evaluate_model(simplenn_model, X_test, y_test, device, "SimpleNN")
+    print("\nMetrics for SimpleNN:")
+    for metric, value in metrics.items():
+        print(f"{metric}: {value:.4f}")
+    
+    # Evaluate SGLD models
+    print("\nEvaluating SGLD models...")
+    for i, model in enumerate(sgld_models):
+        print(f"\nEvaluating SGLD model {i+1}/{len(sgld_models)}")
+        metrics = evaluate_model(model, X_test, y_test, device, f"SGLD_{i+1}")
+        print(f"Metrics for SGLD_{i+1}:")
+        for metric, value in metrics.items():
+            print(f"{metric}: {value:.4f}")
+    
+    # Evaluate ensemble (SimpleNN + SGLD samples)
+    print("\nEvaluating ensemble...")
+    ensemble_metrics = evaluate_ensemble([simplenn_model] + sgld_models, X_test, y_test, device)
+    print("\nEnsemble Metrics:")
+    for metric, value in ensemble_metrics.items():
+        print(f"{metric}: {value:.4f}")
+    
+    # Plot model analysis
+    print("\nGenerating model analysis plots...")
+    plot_model_analysis(
+        [simplenn_model] + sgld_models, 
+        X_test, 
+        y_test, 
+        lr=simplenn_config['learning_rate'],
+        noise_std=sgld_config['noise_std'],
+        device=device
+    )
 
-X_train_tensor = torch.FloatTensor(X_train)
-y_train_tensor = torch.FloatTensor(y_train).unsqueeze(1)
-X_test_tensor = torch.FloatTensor(X_test)
-y_test_tensor = torch.FloatTensor(y_test).unsqueeze(1)
-
-train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-
-# Train SimpleNN
-simplenn = SimpleNN(X_train.shape[1])
-simplenn = train_simplenn(simplenn, train_loader)
-
-# Train BayesianNN with chosen SGLD config
-print(f"\n🔍 Training BayesianNN with SGLD: lr={lr}, noise_std={noise_std}, epochs={epochs}, burnin_ratio={burnin_ratio}")
-bayes_model = BayesianNN(X_train.shape[1])
-posterior_samples = sgld_training(bayes_model, train_loader, epochs=epochs, lr=lr, noise_std=noise_std, burnin_ratio=burnin_ratio)
-
-# Create list of Bayesian models from samples
-bayes_models = []
-for sample in posterior_samples[:10]:
-    m = BayesianNN(X_train.shape[1])
-    for p, sample_param in zip(m.parameters(), sample):
-        p.data = sample_param.clone()
-    bayes_models.append(m)
-
-# Evaluate all models
-model_results = {}
-model_results["SimpleNN"] = evaluate_model(simplenn, X_test_tensor, y_test_tensor)
-
-with torch.no_grad():
-    simplenn_probs = simplenn(X_test_tensor).numpy().flatten()
-    plot_calibration_curve("SimpleNN", simplenn_probs, y_test_tensor.numpy().flatten())
-
-for idx, model in enumerate(bayes_models, start=1):
-    model_results[f"BayesianNN_Sample_{idx}"] = evaluate_model(model, X_test_tensor, y_test_tensor)
-
-# Evaluate ensemble
-with torch.no_grad():
-    probs_ensemble = torch.zeros_like(y_test_tensor)
-    for model in bayes_models:
-        probs_ensemble += model(X_test_tensor)
-    probs_ensemble /= len(bayes_models)
-
-    preds_ensemble = (probs_ensemble >= 0.5).float()
-    probas = probs_ensemble.numpy().flatten()
-    labels = y_test_tensor.numpy().flatten()
-    preds_np = preds_ensemble.numpy().flatten()
-
-    acc = accuracy_score(labels, preds_np)
-    prec = precision_score(labels, preds_np)
-    f1 = f1_score(labels, preds_np)
-    ece = compute_ece(probas, labels)
-
-    model_results["BayesianNN_Ensemble"] = {
-        "Accuracy": acc,
-        "Precision": prec,
-        "F1 Score": f1,
-        "ECE": ece
-    }
-plot_calibration_curve("BayesianNN Ensemble", probas, labels)
-
-# Save results
-filename = f'final_results_lr{lr}_noise{noise_std}_epochs{epochs}_burnin{int(burnin_ratio*100)}.csv'
-save_results(model_results, filename)
-
-# Plot parameter variance
-all_params = []
-for model in bayes_models:
-    flat_params = torch.cat([p.view(-1) for p in model.parameters()])
-    all_params.append(flat_params.detach().numpy())
-all_params = np.stack(all_params)
-variances = np.var(all_params, axis=0)
-
-plt.figure(figsize=(10, 4))
-plt.hist(variances, bins=50, alpha=0.75)
-plt.title(f"Parameter Variance (lr={lr}, noise={noise_std}, epochs={epochs}, burnin={burnin_ratio})")
-plt.xlabel("Variance")
-plt.ylabel("Count")
-plt.grid(True)
-plt.tight_layout()
-plt.show()
-
-# Plot prediction variance
-predictions = []
-with torch.no_grad():
-    for model in bayes_models:
-        preds = model(X_test_tensor)
-        predictions.append(preds.numpy().flatten())
-predictions = np.stack(predictions)
-prediction_std = np.std(predictions, axis=0)
-
-plt.figure(figsize=(10, 4))
-plt.hist(prediction_std, bins=40, alpha=0.75)
-plt.title(f"Prediction StdDev (lr={lr}, noise={noise_std}, epochs={epochs}, burnin={burnin_ratio})")
-plt.xlabel("Std Dev of Predictions")
-plt.ylabel("Count")
-plt.grid(True)
-plt.tight_layout()
-plt.show()
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        print(f"Fatal error: {str(e)}")
+        input("Press Enter to exit...")  # This will keep the window open 

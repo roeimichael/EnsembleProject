@@ -1,35 +1,89 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
+*$py.class
 *.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/
-
-# Virtual environments
-.venv/
-bayesnet_py310/
-env/
+# Virtual Environment
 venv/
+env/
+ENV/
+.env
+.venv
 
-# VSCode and JetBrains IDEs (like PyCharm)
-.vscode/
+# IDE
 .idea/
+.vscode/
+*.swp
+*.swo
+*~
 
-# Logs and temp files
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Project specific
+data/
+results/
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.pkl
+*.npy
+*.npz
+
+# Logs
 *.log
-*.tmp
-*.temp
-*.bak
+logs/
+tensorboard/
 
-# OS-generated files
+# OS specific
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Results and artifacts (optional — remove if you want them in Git)
-results/
-*.csv
-*.png
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Project tree output
-project_tree.txt
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
