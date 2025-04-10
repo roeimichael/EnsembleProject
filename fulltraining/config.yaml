@@ -1,39 +1,38 @@
 # Data Configuration
 data:
-  train_size: 0.1  # Fraction of training data to use
-  batch_size: 64
-  num_workers: 2
+  train_size: 0.1  # 10% of the data
+  batch_size: 64   # Smaller batch size for better generalization
+  num_workers: 4
   transform:
     normalize_mean: 0.5
     normalize_std: 0.5
+  pin_memory: true
 
 # Model Architecture
 model:
-  input_size: 784  # 28x28 flattened images
-  hidden_dims: [128]  # Single hidden layer with 128 units
-  output_size: 10  # Number of classes
-  dropout_rate: 0.2
+  input_size: 784
+  hidden_dims: [128]  # Single hidden layer for stability
+  output_size: 10
+  dropout_rate: 0.2   # Moderate dropout
   use_batch_norm: true
-  prior_std: 0.1  # For Bayesian models
+  prior_std: 0.1     # Standard prior
 
 # Training Parameters
 training:
   simplenn:
-    epochs: 200
+    epochs: 75
     learning_rate: 0.01
   sgld:
-    epochs: 1000
-    learning_rate: 0.001
-    noise_std: 0.05
-    temperature: 0.5
-    burnin_epochs: 700
+    epochs: 2000
+    learning_rate: 0.005    # Slightly higher learning rate for better exploration
+    noise_std: 0.001       # Increased noise for better sampling
+    temperature: 1.0       # Standard temperature for proper sampling
     target_samples: 10
-    sample_interval: 30  # Sample every N epochs after burn-in
 
 # Evaluation
 evaluation:
-  num_bins: 15  # For calibration plots
-  device: "cuda"  # or "cpu"
+  num_bins: 15
+  device: "cuda"
 
 # Random Seed
 random_seed: 42 

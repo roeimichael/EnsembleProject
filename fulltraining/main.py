@@ -9,7 +9,14 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 import seaborn as sns
 from Models import SimpleNN, BayesianNN
-from helper_functions import train_simplenn, sgld_training, evaluate_model, evaluate_ensemble, plot_model_analysis
+from helper_functions import (
+    train_simplenn, 
+    sgld_training, 
+    evaluate_model, 
+    evaluate_ensemble, 
+    plot_model_analysis,
+    load_simplenn
+)
 from model_manager import save_model, load_model, save_sgld_samples, load_sgld_samples
 from config_manager import ConfigManager
 
@@ -50,7 +57,10 @@ def load_and_prepare_data(config: ConfigManager):
         trainset, 
         batch_size=data_config['batch_size'], 
         shuffle=True, 
-        num_workers=data_config['num_workers']
+        num_workers=data_config['num_workers'],
+        pin_memory=data_config['pin_memory'],
+        persistent_workers=True,  # Keep workers alive between epochs
+        prefetch_factor=2  # Prefetch 2 batches per worker
     )
     
     # Prepare test data and flatten images
@@ -65,58 +75,21 @@ def main():
     # Load configuration
     config = ConfigManager()
     
-    # Set random seed for reproducibility
     torch.manual_seed(config.get_random_seed())
     np.random.seed(config.get_random_seed())
-    
-    # Set device
     device = torch.device(config.get_device() if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
-    
-    # Load and prepare data
     train_loader, X_test, y_test = load_and_prepare_data(config)
-    
-    # Get model configuration
     model_config = config.get_model_config()
     input_size = model_config['input_size']
     hidden_dims = tuple(model_config['hidden_dims'])
-    
-    # Try to load existing models, or train new ones
+
+    print("\nLoading SimpleNN model from saved file...")
     try:
-        print("\nAttempting to load existing models...")
-        simplenn_model = SimpleNN(
-            input_size, 
-            hidden_dims,
-            dropout_rate=model_config['dropout_rate'],
-            use_batch_norm=model_config['use_batch_norm']
-        ).to(device)
-        simplenn_model = load_model(simplenn_model, "simplenn", device)
-        print("Loaded existing SimpleNN model")
-        
-        # Load SGLD samples
-        sgld_samples = load_sgld_samples("sgld")
-        print(f"Loaded {len(sgld_samples)} SGLD samples")
-        
-        # Create models from samples
-        sgld_models = []
-        for i, sample in enumerate(sgld_samples):
-            model = BayesianNN(
-                input_size, 
-                hidden_dims,
-                dropout_rate=model_config['dropout_rate'],
-                use_batch_norm=model_config['use_batch_norm'],
-                prior_std=model_config['prior_std']
-            ).to(device)
-            for name, param in model.named_parameters():
-                if name in sample:
-                    param.data.copy_(sample[name].to(device))
-            sgld_models.append(model)
-        print("Created models from SGLD samples")
-        
+        simplenn_model = load_simplenn(input_size, hidden_dims, device)
+        print("Successfully loaded SimpleNN model")
     except FileNotFoundError:
-        print("\nNo existing models found. Training new models...")
-        # Create and train a single SimpleNN model
-        print("\nTraining SimpleNN model...")
+        print("No saved model found. Training new SimpleNN model...")
         simplenn_model = SimpleNN(
             input_size, 
             hidden_dims,
@@ -130,12 +103,35 @@ def main():
             train_loader, 
             epochs=simplenn_config['epochs'],
             lr=simplenn_config['learning_rate'],
-            device=device
+            device=device,
+            save_model=True
         )
-        save_model(simplenn_model, "simplenn")
-        
-        # Train SGLD models (sample from posterior)
-        print("\nSampling from posterior using SGLD...")
+    
+    # Train SGLD models (sample from posterior)
+    print("\nSampling from posterior using SGLD...")
+    model = BayesianNN(
+        input_size, 
+        hidden_dims,
+        dropout_rate=model_config['dropout_rate'],
+        use_batch_norm=model_config['use_batch_norm'],
+        prior_std=model_config['prior_std']
+    ).to(device)
+    
+    sgld_config = config.get_sgld_config()
+    sgld_samples = sgld_training(
+        model=model,
+        train_loader=train_loader,
+        epochs=sgld_config['epochs'],
+        lr=sgld_config['learning_rate'],
+        noise_std=sgld_config['noise_std'],
+        device=device,
+        temperature=sgld_config['temperature']
+    )
+    save_sgld_samples(sgld_samples, "sgld")
+    
+    # Create models from samples
+    sgld_models = []
+    for i, sample in enumerate(sgld_samples):
         model = BayesianNN(
             input_size, 
             hidden_dims,
@@ -143,33 +139,10 @@ def main():
             use_batch_norm=model_config['use_batch_norm'],
             prior_std=model_config['prior_std']
         ).to(device)
-        
-        sgld_config = config.get_sgld_config()
-        sgld_samples = sgld_training(
-            model=model,
-            train_loader=train_loader,
-            epochs=sgld_config['epochs'],
-            lr=sgld_config['learning_rate'],
-            noise_std=sgld_config['noise_std'],
-            device=device,
-            temperature=sgld_config['temperature']
-        )
-        save_sgld_samples(sgld_samples, "sgld")
-        
-        # Create models from samples
-        sgld_models = []
-        for i, sample in enumerate(sgld_samples):
-            model = BayesianNN(
-                input_size, 
-                hidden_dims,
-                dropout_rate=model_config['dropout_rate'],
-                use_batch_norm=model_config['use_batch_norm'],
-                prior_std=model_config['prior_std']
-            ).to(device)
-            for name, param in model.named_parameters():
-                if name in sample:
-                    param.data.copy_(sample[name].to(device))
-            sgld_models.append(model)
+        for name, param in model.named_parameters():
+            if name in sample:
+                param.data.copy_(sample[name].to(device))
+        sgld_models.append(model)
     
     # Evaluate SimpleNN model
     print("\nEvaluating SimpleNN model...")

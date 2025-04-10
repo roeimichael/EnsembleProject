@@ -3,14 +3,19 @@ from pathlib import Path
 from typing import List, Dict, Optional
 import logging
 from Models import SimpleNN, BayesianNN
+import os
 
 # Set up logging
 logger = logging.getLogger(__name__)
 
+# Define models directory
+MODELS_DIR = Path(__file__).parent / "saved_models"
+MODELS_DIR.mkdir(exist_ok=True)
+
 def ensure_models_dir() -> Path:
     """Create and return the directory for storing trained models."""
     current_dir = Path(__file__).parent
-    models_dir = current_dir / "trained_models"
+    models_dir = current_dir / "saved_models"
     models_dir.mkdir(exist_ok=True)
     return models_dir
 
@@ -33,12 +38,12 @@ def load_model(model: torch.nn.Module, name: str, device: torch.device) -> torch
         if not load_path.exists():
             raise FileNotFoundError(f"Model file not found: {load_path}")
         
-        model.load_state_dict(torch.load(load_path))
+        model.load_state_dict(torch.load(load_path, map_location=device))
         model = model.to(device)
         logger.info(f"Loaded model from {load_path}")
         return model
     except Exception as e:
-        logger.error(f"Error loading model: {e}")
+        logger.error(f"Error loading model {name}: {str(e)}")
         raise
 
 def save_sgld_samples(samples: List[Dict[str, torch.Tensor]], name: str) -> None:
@@ -53,7 +58,7 @@ def save_sgld_samples(samples: List[Dict[str, torch.Tensor]], name: str) -> None
         raise
 
 def load_sgld_samples(name: str) -> List[Dict[str, torch.Tensor]]:
-    """Load SGLD posterior samples from disk."""
+    """Load SGLD samples from disk."""
     try:
         models_dir = ensure_models_dir()
         load_path = models_dir / f"{name}_samples.pt"
@@ -63,6 +68,9 @@ def load_sgld_samples(name: str) -> List[Dict[str, torch.Tensor]]:
         samples = torch.load(load_path)
         logger.info(f"Loaded SGLD samples from {load_path}")
         return samples
+    except FileNotFoundError:
+        logger.error(f"Samples file not found: {load_path}")
+        raise
     except Exception as e:
-        logger.error(f"Error loading SGLD samples: {e}")
+        logger.error(f"Error loading SGLD samples: {str(e)}")
         raise 
