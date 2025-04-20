@@ -1,0 +1,36 @@
+# Dataset configuration
+data:
+  name: "wine"  # Options: "wine", "breast_cancer", "diabetes"
+  train_size: 0.8
+  batch_size: 32
+  random_state: 42
+
+# Training configuration
+training:
+  device: "cuda"  # Options: "cuda", "cpu"
+  epochs: 1000
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  patience: 20
+
+# Model configuration
+model:
+  hidden_dim: 64
+  prior_std: 1.0
+  dropout_rate: 0.2
+
+# SGLD configuration
+sgld:
+  learning_rate: 0.001
+  temperature: 1.0
+  epochs: 2000
+  prior_std: 1.0
+
+# Paths configuration
+paths:
+  logs: "BasicTraining/logs"
+  plots: "BasicTraining/plots"
+  models: "BasicTraining/models"
+
+# Random Seed
+random_seed: 42 
