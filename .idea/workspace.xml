@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="04170353-6dd5-4aee-806a-c4295c4bd632" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fulltraining/Models.py" beforeDir="false" afterPath="$PROJECT_DIR$/fulltraining/Models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fulltraining/helper_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/fulltraining/helper_functions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fulltraining/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/fulltraining/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_tree.py" beforeDir="false" />
-    </list>
+    <list default="true" id="04170353-6dd5-4aee-806a-c4295c4bd632" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -35,31 +29,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python tests.Python tests for test_calibration.TestCalibrationCurve.test_all_wrong_predictions.executor": "Run",
-    "Python tests.Python tests in test_calibration.py.executor": "Run",
-    "Python.Bayesian_ensemble.executor": "Debug",
-    "Python.HelperFunctions.executor": "Run",
-    "Python.credit_score_testing.executor": "Debug",
-    "Python.generate_tree.executor": "Debug",
-    "Python.helper_functions.executor": "Run",
-    "Python.main (1).executor": "Run",
-    "Python.main.executor": "Debug",
-    "Python.scratc h.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/roeym/Desktop/projects/Ensemble_SandBox/fulltraining/main.py",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests for test_calibration.TestCalibrationCurve.test_all_wrong_predictions.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_calibration.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Bayesian_ensemble.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.HelperFunctions.executor&quot;: &quot;Run&quot;,
+    &quot;Python.credit_score_testing.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.generate_tree.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.helper_functions.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.scratc h.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/roeym/Desktop/projects/Ensemble_SandBox/fulltraining/main.py&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\roeym\Desktop\projects\Ensemble_SandBox\credit_score_data" />
@@ -216,6 +210,7 @@
       <workItem from="1741886218134" duration="5312000" />
       <workItem from="1742754070993" duration="4716000" />
       <workItem from="1742837394228" duration="13487000" />
+      <workItem from="1744465215917" duration="6000" />
     </task>
     <servers />
   </component>
@@ -238,7 +233,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/fulltraining/helper_functions.py</url>
-          <line>53</line>
+          <line>65</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
